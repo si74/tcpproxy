@@ -1,9 +1,9 @@
-# tcpproxy
+# tcpproxy - layer 4
 
 ## Background
 
 - IPVS - TCP loadbalancer built into Linux kernel
-- goal is to build something similar to IPVS
+- goal is to build something similar to IPVS [https://github.com/torvalds/linux/tree/master/net/netfilter/ipvs](https://github.com/torvalds/linux/tree/master/net/netfilter/ipvs)
 
 ## Considerations
 
@@ -12,6 +12,7 @@
 - every client connection coming to proxy requires opening a backend connection
 - This is a TCP proxy - uses TCP handshake to establish a connection (SYN, SYN-ACK, ACK).
 - Load balancing strategies - round robin, random, weighted least connections, same client to same backend, etc.
+  - Source: [http://www.linuxvirtualserver.org/docs/scheduling.html](http://www.linuxvirtualserver.org/docs/scheduling.html)
 - How to close connections in TCP - orderly way (FIN, and ACK. (Tidbit: TCP connections can be half-open.)
 or abruptly with RST flag ("connection reset by peer.")
 - Max number of connections or go-routine limitation (if 1 per connection).
@@ -30,3 +31,31 @@ or abruptly with RST flag ("connection reset by peer.")
         - Reads bytes from connection A and writes bytes to connection B.
    - When error happens in either of these go-routines, shut down main go-routine.
 5. Just wait for the next incoming connection to listener.
+
+## How to test: 
+1. Leveraging example.com and telnet //TODO(sneha): add more details on how to do this with the host header
+
+```
+$ telnet localhost 9090
+Trying ::1...
+telnet: connect to address ::1: Connection refused
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is '^]'.
+GET / HTTP/1.1
+Host: example.com
+```
+
+2. Leveraging netcat and telnet
+
+```
+$ nc -l 12345
+hi
+```
+
+```
+telnet localhost 9090
+Trying ::1...
+telnet: connect to address ::1: Connection refused
+Trying 127.0.0.1...
+```
