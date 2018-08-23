@@ -16,6 +16,7 @@
 - How to close connections in TCP - orderly way (FIN, and ACK. (Tidbit: TCP connections can be half-open.)
 or abruptly with RST flag ("connection reset by peer.")
 - Max number of connections or go-routine limitation (if 1 per connection).
+- May have keep-alive - send ACK flag to keep connections open. But every incoming connection (even if from same client), don't necessarily want to reuse back-end connection. Otherwise could mix data on backend connection. 
 
 ## Pseudocode:
 
@@ -32,7 +33,7 @@ or abruptly with RST flag ("connection reset by peer.")
    - When error happens in either of these go-routines, shut down main go-routine.
 5. Just wait for the next incoming connection to listener.
 
-## How to test: 
+## How to test:
 1. Leveraging example.com and telnet //TODO(sneha): add more details on how to do this with the host header
 
 ```
